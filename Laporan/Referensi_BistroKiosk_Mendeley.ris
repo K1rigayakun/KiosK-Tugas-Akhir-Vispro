@@ -1,0 +1,158 @@
+TY  - JOUR
+AU  - Hatzivasilis, George
+PY  - 2017
+TI  - Password-hashing status
+T2  - Cryptography
+VL  - 1
+IS  - 2
+SP  - 10
+DO  - 10.3390/cryptography1020010
+UR  - https://doi.org/10.3390/cryptography1020010
+ER  - 
+
+TY  - JOUR
+AU  - Huda, Muhammad Nurul
+AU  - Burhan, Muhammad
+AU  - Satibi, Ahmad
+AU  - Pradita, Helmy Agus
+AU  - Saifudin, Aries
+AU  - Kusyadi, Irpan
+PY  - 2022
+TI  - Implementasi black box testing pada aplikasi sistem kasir dengan menggunakan teknik equivalence partitions
+T2  - Jurnal Teknologi Sistem Informasi dan Aplikasi
+VL  - 5
+IS  - 2
+SP  - 120
+EP  - 127
+DO  - 10.32493/jtsi.v5i2.17645
+UR  - https://doi.org/10.32493/jtsi.v5i2.17645
+ER  - 
+
+TY  - JOUR
+AU  - Koo, Wanmo
+AU  - Kumar, Archana
+PY  - 2026
+TI  - Moderating role of perceived staff-replacement likelihood on self-ordering kiosk adoption
+T2  - International Journal of Technology and Human Interaction
+VL  - 22
+IS  - 1
+SP  - 1
+EP  - 20
+DO  - 10.4018/IJTHI.402704
+UR  - https://doi.org/10.4018/IJTHI.402704
+ER  - 
+
+TY  - CONF
+AU  - Lee, Yi Shan
+AU  - Yen, I Wen
+AU  - Zheng, Meng-Cong
+PY  - 2023
+TI  - Usability evaluation of self-ordering kiosks in fast food restaurants
+T2  - Usability and User Experience
+VL  - 110
+PB  - AHFE International
+DO  - 10.54941/ahfe1003203
+UR  - https://doi.org/10.54941/ahfe1003203
+ER  - 
+
+TY  - JOUR
+AU  - Marinakou, Evangelia
+AU  - Giousmpasoglou, Charalampos
+AU  - Sakulrungsap, Kanpisuth
+PY  - 2023
+TI  - Customer intention to reuse self-ordering kiosks in fast-food restaurant: The case of Bangkok, Thailand
+T2  - Tourism and Hospitality Management
+VL  - 29
+IS  - 4
+SP  - 545
+EP  - 559
+DO  - 10.20867/thm.29.4.6
+UR  - https://doi.org/10.20867/thm.29.4.6
+ER  - 
+
+TY  - ELEC
+AU  - Microsoft
+PY  - 2017
+TI  - How to: Create MDI parent forms
+T2  - Microsoft Learn
+UR  - https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/how-to-create-mdi-parent-forms
+Y2  - 2026/11/24
+ER  - 
+
+TY  - ELEC
+AU  - Microsoft
+PY  - 2024
+TI  - Platform Invoke (P/Invoke)
+T2  - Microsoft Learn
+UR  - https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke
+Y2  - 2026/11/24
+ER  - 
+
+TY  - ELEC
+AU  - Microsoft
+PY  - 2025
+TI  - What is Windows Forms
+T2  - Microsoft Learn
+UR  - https://learn.microsoft.com/en-us/dotnet/desktop/winforms/overview/
+Y2  - 2026/11/24
+ER  - 
+
+TY  - RPRT
+AU  - Moriarty, Kathleen
+AU  - Kaliski, Burt
+AU  - Rusch, Andreas
+PY  - 2017
+TI  - PKCS #5: Password-based cryptography specification version 2.1
+PB  - Internet Engineering Task Force
+M1  - RFC 8018
+DO  - 10.17487/RFC8018
+UR  - https://doi.org/10.17487/RFC8018
+ER  - 
+
+TY  - JOUR
+AU  - Naya, Candra
+AU  - Nugroho, Bayu
+AU  - Rilvani, Elkin
+PY  - 2022
+TI  - Implementasi aplikasi kasir pada Warung Chicken Geprek Sahabat berbasis desktop menggunakan VB.Net
+T2  - SIGMA - Jurnal Teknologi Pelita Bangsa
+VL  - 13
+IS  - 2
+SP  - 81
+EP  - 86
+UR  - https://jurnal.pelitabangsa.ac.id/index.php/sigma/article/view/1222
+ER  - 
+
+TY  - JOUR
+AU  - Rafferty, Nathan Eleazar
+AU  - Fajar, Ahmad Nurul
+PY  - 2022
+TI  - Integrated QR payment system (QRIS): Cashless payment solution in developing country from merchant perspective
+T2  - Asia Pacific Journal of Information Systems
+VL  - 32
+IS  - 3
+SP  - 630
+EP  - 655
+DO  - 10.14329/apjis.2022.32.3.630
+UR  - https://doi.org/10.14329/apjis.2022.32.3.630
+ER  - 
+
+TY  - JOUR
+AU  - Saran, Ayse Nurdan
+PY  - 2024
+TI  - On time-memory trade-offs for password hashing schemes
+T2  - Frontiers in Computer Science
+VL  - 6
+SP  - 1368362
+DO  - 10.3389/fcomp.2024.1368362
+UR  - https://doi.org/10.3389/fcomp.2024.1368362
+ER  - 
+
+TY  - ELEC
+AU  - Supabase
+PY  - 2026
+TI  - Connect to your database
+T2  - Supabase Docs
+UR  - https://supabase.com/docs/guides/database/connecting-to-postgres
+Y2  - 2026/11/24
+ER  - 

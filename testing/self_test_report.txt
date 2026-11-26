@@ -1,0 +1,19 @@
+﻿[PASS] ModPromo Uji 1 (Diskon Bertingkat 10% = 25rb) — Got 25000
+[PASS] ModPromo Uji 1 (Voucher HEMAT10 = 25rb) — Got 25000
+[PASS] ModPromo Uji 1 (Pajak 11% = 22rb) — Got 22000
+[PASS] ModPromo Uji 1 (Total = 222rb) — Got 222000
+[PASS] ModPromo Uji 2 (Diskon Bertingkat = 0) — Got 0
+[PASS] ModPromo Uji 2 (Voucher POTONG5K = 5rb) — Got 5000
+[PASS] ModPromo Uji 2 (Pajak 11% = 9.350) — Got 9350
+[PASS] ModPromo Uji 2 (Total = 94.350) — Got 94350
+[PASS] ModPromo Voucher Kadaluarsa Ditolak — Voucher 'EXPIRED2025' sudah kadaluarsa sejak 31 Dec 2025.
+[PASS] ModPesanan PecahKembalian(138.500) — Count keys = 7
+[PASS] ModKeranjang IsiContohDemo Subtotal = 91.000 — Got 91000
+[PASS] ModAntrian Tolak Batal saat Status Siap — Returned False
+[PASS] ModLaporan Rekap Array 2D — 7x7
+[PASS] PBKDF2 Verifikasi Admin — PBKDF2 OK
+[PASS] ModAnimasi Snap Mode AnimateNumber — Rp42.000
+[PASS] ModAnimasi SiapkanTransisiMasuk Pre-Paint — Snap=1, Anim=0
+[PASS] ModNavigasi Fullscreen Sync — On=True, Off=False, Events=2
+[PASS] ModPromo Validasi Ulang MinBelanja Voucher — 40rb=False, 60rb=True
+TOTAL FAILURES: 0

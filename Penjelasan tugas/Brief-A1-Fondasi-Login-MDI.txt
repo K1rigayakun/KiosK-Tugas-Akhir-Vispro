@@ -1,0 +1,847 @@
+========================================================================================
+KIOSK PEMESANAN MAKANAN (WINDOWS FORMS VB.NET + SUPABASE)
+BRIEF ANGGOTA 1 DARI 5: FONDASI, LOGIN, MDI INDUK, PENGGUNA, PENGATURAN, INTEGRASI
+Nama: ______________________      Versi 1, 20 November 2026
+========================================================================================
+
+Baca file ini sampai habis sebelum mulai. Bagian 2 adalah tugasmu secara rinci. Bagian
+lainnya adalah kesepakatan bersama yang isinya sama di kelima file, jadi kamu tidak
+perlu membuka file anggota lain untuk memahami proyek.
+
+Isi: 1 Ringkasan | 2 Tugasmu | 3 Form dan modul | 4 Struktur dan konvensi |
+     5 Database | 6 Kontrak antar anggota | 7 Pengembangan | 8 Aturan kerja |
+     9 Git | 10 Urutan kerja | 11 Uji alur | 12 Risiko dan tips | 13 Checklist tim
+
+========================================================================================
+1. RINGKASAN PROYEK
+========================================================================================
+Aplikasi pemesanan makanan bergaya kiosk MCD/KFC. Dibuat dengan Windows Forms VB.NET
+(.NET 10) dan database PostgreSQL di Supabase. Dikerjakan 5 orang secara paralel.
+
+Dua mode aplikasi:
+- Mode Kiosk: layar penuh dan selalu di atas. Dipakai pelanggan untuk memilih menu dan
+  memesan.
+- Mode Staff: jendela MDI. Staf menekan Ctrl+Alt+F12 di kiosk, login, lalu masuk. Isinya
+  kasir, dapur, layar antrian, dan admin (produk, voucher, laporan, dashboard, member,
+  pengguna, pengaturan, log).
+
+Alur satu pesanan:
+1. Pelanggan memilih Dine In atau Take Away, memilih menu, mengatur opsi, lalu
+   memasukkan ke keranjang (A2, A3).
+2. Checkout: diskon, voucher, pajak, pilih metode bayar. Pesanan disimpan dan mendapat
+   nomor antrian (A3).
+3. Tunai: status "Menunggu Pembayaran", pelanggan bayar di kasir lalu kasir konfirmasi
+   (A4). QRIS/kartu/e-wallet (simulasi): langsung Lunas dan "Diproses" (A3).
+4. Dapur melihat pesanan "Diproses" dan menandainya "Siap" (A4).
+5. Layar antrian menampilkan nomor yang sedang disiapkan dan yang siap diambil (A4).
+6. Pesanan diambil dan menjadi "Selesai". Datanya masuk riwayat dan laporan admin (A5).
+
+Pembagian anggota:
+A1  Fondasi, Login, MDI induk, Pengguna, Pengaturan, integrasi akhir
+A2  Kiosk pelanggan: Welcome, Menu, Detail Produk, idle, rating
+A3  Keranjang, Checkout, Pembayaran, Struk
+A4  Kasir, Dapur, Layar Antrian, Log aktivitas
+A5  Admin: Produk, Voucher, Laporan, Dashboard, Member
+
+Nama: A1 ____________  A2 ____________  A3 ____________
+      A4 ____________  A5 ____________
+
+Materi wajib: repo https://github.com/rezaaplvv/Pemograman-Visual, yaitu Pertemuan 1-8,
+11 (Windows API), dan 12 (Menu MDI). Repo itu hanya referensi, jangan di-push ke sana.
+Pertemuan 9 dan 10 tidak ada di repo, jadi tidak dihitung. Kalau dosen ternyata
+mewajibkannya, kabari tim. README repo punya "Kamus Sintaks" yang berguna sebagai
+contekan.
+
+Materi adalah syarat MINIMAL. Semua orang wajib memenuhinya dulu. Pengembangan di atas
+materi ada di bagian 7 dan dikerjakan setelah bagian minimal milikmu jalan.
+
+Syarat minimal setiap anggota:
+- Punya minimal satu form dan satu modul sendiri.
+- Punya minimal satu query ke Supabase yang berparameter.
+- Validasi input dengan ErrorProvider dan TryParse.
+- Penanganan error dengan Try/Catch (dan Finally bila perlu).
+- Dokumentasi berformat repo materi: deskripsi, tabel kontrol, kode, pembahasan,
+  kesimpulan.
+
+========================================================================================
+2. TUGASMU: ANGGOTA 1 (FONDASI, LOGIN, MDI INDUK, PENGGUNA, PENGATURAN, INTEGRASI)
+========================================================================================
+
+
+2.1 Peranmu
+-----------
+Kamu menyiapkan fondasi yang dipakai semua orang, lalu mengerjakan login, jendela utama
+staff, manajemen pengguna, dan pengaturan. Kamu juga penanggung jawab merge dan
+integrasi akhir. Pekerjaanmu yang paling awal adalah kerangka (Fase 0). Anggota lain
+menunggu kerangka darimu, jadi targetkan selesai dalam 2-3 jam, dan jangan menunggu
+sempurna. Setelah kerangka terkirim, kelima orang bekerja serentak.
+
+
+2.2 Fase 0: kerangka (kerjakan dulu, urut)
+------------------------------------------
+- [ ] Buat project Supabase BARU untuk tim. Jangan pakai database dari repo materi
+      karena passwordnya sudah terbuka di repo publik.
+- [ ] Jalankan skema dan data awal (bagian 2.5), simpan sebagai Database/skema.sql dan
+      Database/seed.sql. Aktifkan RLS di semua tabel tanpa policy.
+- [ ] Ambil connection string dari dashboard Supabase. Kalau koneksi dari rumah gagal,
+      pakai string "Session pooler". Bagikan ke tim lewat chat saja.
+- [ ] Buat solution .slnx target net10.0-windows (VB, Windows Forms). Pasang paket
+      Npgsql dan Microsoft.Extensions.Configuration.Json. Di .vbproj set OptionStrict
+      On. Startup mengikuti pola proyek materi.
+- [ ] Agar foto dan konfigurasi ikut ke folder output, tambahkan di .vbproj:
+<ItemGroup>
+  <None Update="appsettings.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+  <None Update="Asset\**\*"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+</ItemGroup>
+- [ ] Buat struktur folder (bagian 4.1) dan appsettings.example.json (format mengikuti
+      materi Pertemuan 6, isinya placeholder, jangan salin password dari repo materi).
+- [ ] Buat Model/Konstanta.vb dan semua class model (bagian 5.3 dan 6.1).
+- [ ] Buat semua modul dengan signature final (bagian 6). Modul milik orang lain berisi
+      stub yang mengembalikan data dummy, supaya form mereka langsung bisa jalan. Contoh
+      dummy yang berguna: ModProduk 7 kategori dan 12 produk, ModAntrian 6 pesanan
+      dengan status berbeda, ModLaporan beberapa baris riwayat.
+- [ ] Buat form kosong dengan nama final untuk semua anggota (bagian 3.1), masing-masing
+      di foldernya.
+- [ ] Sub Main: memuat ModPengaturan, lalu Application.Run(New FrmWelcome). FrmWelcome
+      dikosongkan dulu, A2 yang mengisinya.
+- [ ] Buat .gitignore (dotnet new gitignore ditambah appsettings.json). Pastikan
+      solution build tanpa error.
+- [ ] Kirim kerangka: ZIP ke grup bila repo belum ada, atau push ke main bila sudah ada
+      (bagian 9). Umumkan di grup bahwa kerangka siap, beserta connection string lewat
+      chat.
+
+
+2.3 Form dan modul yang kamu bangun (wajib)
+-------------------------------------------
+FrmLogin (Forms/Umum)
+- Kontrol: txtUsername, txtPassword (PasswordChar "*"), btnMasuk, btnBatal, lblPesan,
+  errLogin (ErrorProvider), tmrKunci (Timer).
+- Kedua kolom wajib diisi (ErrorProvider). Query berparameter ke tabel pengguna
+  (username dan aktif = true), lalu bandingkan hash password. Seluruh proses dibungkus
+  Try/Catch/Finally: koneksi gagal menghasilkan pesan ramah, bukan crash.
+- Saat sukses: isi ModSesi, ModLog.Catat("LOGIN"), DialogResult.OK. Peran diambil dari
+  database, bukan dipilih pengguna.
+- Versi minimal memakai hash SHA256. Butir pengembangan #4 menggantinya.
+
+FrmUtama (MDI induk, Forms/Umum)
+- IsMdiContainer = True. MenuStrip: Transaksi (Kasir), Dapur (Dapur, Layar Antrian),
+  Master (Produk, Voucher, Member), Laporan (Laporan, Dashboard), Sistem (Pengguna,
+  Pengaturan, Log, Kembali ke Kiosk, Keluar).
+- Menu tampil sesuai peran lewat ModSesi.BolehAkses. Admin: semua menu. Kasir: Kasir,
+  Dapur, Layar Antrian, Member.
+- Membuka form anak: cek dulu apakah sudah terbuka (For Each pada MdiChildren). Bila
+  sudah, cukup aktifkan. Bila belum, set MdiParent lalu Show. FrmAntrian dibuka sebagai
+  jendela biasa karena layar penuh.
+- Menu Window: Cascade, Tile Horizontal, Tile Vertical, Tutup Semua (LayoutMdi).
+- StatusStrip: nama dan peran pengguna, jam (Timer), status koneksi database
+  (ModDatabase.TesKoneksi dipanggil async).
+- "Kembali ke Kiosk": tutup semua form anak, ModSesi.Keluar, ModLog.Catat("LOGOUT"),
+  lalu tampilkan lagi FrmWelcome.
+
+FrmPengguna (Forms/Umum)
+- Kontrol: dgvPengguna (bsPengguna), txtUsername, txtNama, txtPassword, cboPeran
+  (DropDownList), chkAktif, txtCari, btnTambah, btnSimpan, btnNonaktifkan,
+  btnResetPassword, errPengguna.
+- CRUD akun Admin dan Kasir. Akun dinonaktifkan, bukan dihapus. Username harus unik (cek
+  ke database dan tampilkan lewat ErrorProvider). Password minimal 6 karakter. Pencarian
+  memakai BindingSource.Filter.
+- Aturan: tidak boleh menonaktifkan atau menurunkan peran akun yang sedang login. Setiap
+  aksi dicatat ModLog.Catat("PENGGUNA_UBAH").
+
+Modul inti
+- ModDatabase: baca appsettings.json lewat Microsoft.Extensions.Configuration.Json,
+  BukaKoneksi, TesKoneksi.
+- ModFunction: AmbilData, EksekusiData, EksekusiScalar berparameter, memakai Using.
+  Modul tidak menampilkan MessageBox, error dilempar ke pemanggil.
+- ModValidasi: WajibIsi, BacaAngka (TryParse plus ErrorProvider), HanyaAngka (untuk
+  KeyPress).
+- ModFormat: Rupiah dan Durasi. Gunakan CultureInfo("id-ID") untuk format Rupiah.
+- ModSesi: data pengguna yang sedang login dan BolehAkses.
+- ModWindowsApi: SelaluDiAtas (SetWindowPos dengan HWND_TOPMOST), DaftarHotkey dan
+  BatalHotkey (RegisterHotKey dan UnregisterHotKey), Bunyi (MessageBeep), WaktuAktif
+  (GetTickCount64). Salin pola dari proyek Pertemuan 11 (DemoWindowsApi), pelajari dulu.
+- Konstanta dan class model sesuai bagian 5.3 dan 6.1.
+
+
+2.4 Materi yang kamu pakai dan wujudnya
+---------------------------------------
+P2   Komponen dan event       Semua form: event Click, MessageBox, Clear, Focus, Close
+P3   Operator dan kendali     Hak akses menu per peran dengan If/ElseIf atau Select Case
+P5   Module, class, koleksi   Semua Mod*, class model, Dictionary pada ModCache/ModPengaturan
+P6   Npgsql / Supabase        ModDatabase, ModFunction, Using, parameter query
+P7   Validasi dan error       ModValidasi, ErrorProvider, TryParse, Try/Catch/Finally
+P11  Windows API              ModWindowsApi (topmost, hotkey, beep, tick count)
+P12  Menu MDI                 FrmUtama: MenuStrip, IsMdiContainer, LayoutMdi, form anak
+P1   Pendahuluan              Bab pendahuluan laporan gabungan
+
+
+2.5 Skema SQL (dijalankan di SQL Editor Supabase)
+-------------------------------------------------
+Simpan sebagai Database/skema.sql. Urutan sudah memperhatikan relasi.
+create table kategori (
+  id_kategori serial primary key,
+  nama varchar(50) not null unique,
+  urutan int not null default 0
+);
+create table produk (
+  id_produk serial primary key,
+  id_kategori int not null references kategori(id_kategori),
+  nama varchar(100) not null,
+  deskripsi text,
+  harga numeric(12,0) not null check (harga >= 0),
+  gambar varchar(150),
+  tersedia boolean not null default true,
+  best_seller boolean not null default false,
+  stok int,
+  dibuat_pada timestamp not null default (now() at time zone 'Asia/Jakarta')
+);
+create table opsi_produk (
+  id_opsi serial primary key,
+  id_produk int not null references produk(id_produk) on delete cascade,
+  nama_opsi varchar(50) not null,
+  tipe varchar(20) not null check (tipe in ('Ukuran','Addon','Pedas')),
+  tambahan_harga numeric(12,0) not null default 0
+);
+create table pengguna (
+  id_pengguna serial primary key,
+  username varchar(50) not null unique,
+  password_hash text not null,
+  nama varchar(100) not null,
+  role varchar(20) not null check (role in ('Admin','Kasir')),
+  aktif boolean not null default true
+);
+create table member (
+  id_member serial primary key,
+  no_hp varchar(20) not null unique,
+  nama varchar(100) not null,
+  poin int not null default 0
+);
+create table voucher (
+  kode varchar(30) primary key,
+  jenis varchar(10) not null check (jenis in ('Persen','Nominal')),
+  nilai numeric(12,2) not null check (nilai > 0),
+  min_belanja numeric(12,0) not null default 0,
+  tgl_mulai date not null,
+  tgl_akhir date not null,
+  aktif boolean not null default true,
+  check (tgl_akhir >= tgl_mulai)
+);
+create table pesanan (
+  id_pesanan serial primary key,
+  no_antrian int not null,
+  tipe_makan varchar(20) not null,
+  tanggal timestamp not null default (now() at time zone 'Asia/Jakarta'),
+  subtotal numeric(12,0) not null,
+  diskon numeric(12,0) not null default 0,
+  pajak numeric(12,0) not null default 0,
+  total numeric(12,0) not null,
+  metode_bayar varchar(20) not null,
+  status_bayar varchar(10) not null default 'Belum',
+  status_pesanan varchar(30) not null default 'Menunggu Pembayaran',
+  id_kasir int references pengguna(id_pengguna),
+  kode_voucher varchar(30) references voucher(kode),
+  id_member int references member(id_member),
+  poin_dipakai int not null default 0,
+  poin_didapat int not null default 0,
+  uang_bayar numeric(12,0),
+  kembalian numeric(12,0),
+  waktu_diproses timestamp,
+  waktu_siap timestamp
+);
+create unique index ux_pesanan_antrian_harian on pesanan ((tanggal::date), no_antrian);
+create index ix_pesanan_status on pesanan (status_pesanan, tanggal);
+create table detail_pesanan (
+  id_detail serial primary key,
+  id_pesanan int not null references pesanan(id_pesanan) on delete cascade,
+  id_produk int not null references produk(id_produk),
+  nama_produk varchar(100) not null,
+  qty int not null check (qty > 0),
+  harga_satuan numeric(12,0) not null,
+  opsi_dipilih text,
+  catatan varchar(200),
+  subtotal numeric(12,0) not null
+);
+create table log_aktivitas (
+  id_log bigserial primary key,
+  waktu timestamp not null default (now() at time zone 'Asia/Jakarta'),
+  id_pengguna int references pengguna(id_pengguna),
+  aksi varchar(50) not null,
+  keterangan text
+);
+create table pengaturan (
+  kunci varchar(50) primary key,
+  nilai text not null
+);
+create table rating_pesanan (
+  id_pesanan int primary key references pesanan(id_pesanan) on delete cascade,
+  bintang int not null check (bintang between 1 and 5),
+  komentar varchar(300)
+);
+create table banner_promo (
+  id_banner serial primary key,
+  judul varchar(100) not null,
+  gambar varchar(150) not null,
+  urutan int not null default 0,
+  aktif boolean not null default true
+);
+-- aktifkan RLS tanpa policy pada setiap tabel, contoh:
+alter table produk enable row level security;
+-- (ulangi untuk semua tabel di atas)
+Isi data awal (Database/seed.sql):
+- 7 kategori: Paket Hemat, Ayam, Burger, Nasi, Side Dish, Minuman, Dessert.
+- Sekitar 24 produk (3-4 per kategori). Beberapa best_seller = true. Satu produk
+  tersedia = false (untuk uji "Habis"). Satu produk stok = 3 (untuk uji stok). Nama file
+  gambar boleh placeholder, aplikasi memakai gambar cadangan bila file tidak ada.
+- Opsi: ukuran Regular (0) dan Large (+5.000) untuk minuman dan side dish, addon Keju
+  (+3.000) dan Saus (+2.000) untuk burger, level pedas 0-3 (tambahan 0) untuk ayam.
+- Pengguna: satu Admin dan satu Kasir (kasir1). Password awal dibuat A1 dan dibagikan
+  lewat chat, ganti sebelum demo.
+- Voucher uji: HEMAT10 (Persen 10, min belanja 50.000), POTONG5K (Nominal 5.000, min
+  belanja 30.000), dan satu voucher yang sudah kadaluarsa.
+- Dua member dummy, 3 baris banner_promo, dan semua kunci pengaturan di bagian 6.7.
+
+
+2.6 Pengembangan milikmu (butir 1, 2, 4, 9, 15)
+-----------------------------------------------
+#1 Tema kiosk modern (P1)
+- ModTema berisi palet (merah, kuning, putih, abu gelap), font Segoe UI, dan metode
+  TerapkanForm, TombolUtama, TombolSekunder. Tombol di kiosk setinggi minimal 56 px,
+  flat, dengan efek hover lewat MouseEnter dan MouseLeave.
+- Versi stub di Fase 0 cukup mengembalikan warna dasar. Versi final dikerjakan di Fase
+  1. Nama anggota dan metode tidak berubah, hanya nilainya, jadi form lain tidak perlu
+  diubah.
+
+#2 Database responsif: async dan cache (P1)
+- Tambahkan versi Async di ModFunction (OpenAsync, ExecuteReaderAsync, lalu
+  DataTable.Load).
+- ModCache menyimpan hasil query di Dictionary dengan waktu kedaluwarsa. Metode Ambil(Of
+  T), Hapus, HapusAwalan. TTL: kategori 300 detik, produk 60 detik.
+- Beri contoh pemakaian di Dokumentasi agar anggota lain memakai Async Sub dan Await,
+  bukan .Result atau .Wait().
+
+#4 Login lebih aman (P1)
+- Ganti SHA256 menjadi PBKDF2 memakai Rfc2898DeriveBytes.Pbkdf2 (SHA256, salt acak 16
+  byte, minimal 100.000 iterasi). Simpan dalam satu string:
+  pbkdf2$iterasi$salt(base64)$hash(base64). Bandingkan dengan
+  CryptographicOperations.FixedTimeEquals.
+- Hash lama (SHA256) tetap diterima satu kali, lalu otomatis diganti ke format baru
+  setelah login berhasil.
+- Batas percobaan: 5 kali gagal berturut-turut mengunci tombol Masuk selama 30 detik.
+  Hitung mundur tampil di lblPesan lewat tmrKunci. Catat LOGIN_GAGAL di ModLog (jangan
+  menyimpan password yang diketik).
+- FrmPengguna memakai format baru untuk tambah akun dan reset password.
+
+#9 Build .exe siap demo (P1)
+- Perintah: dotnet publish -c Release -r win-x64 --self-contained true
+  -p:PublishSingleFile=true. Jangan aktifkan trimming.
+- appsettings.json diletakkan di samping .exe (tidak di-embed karena berisi password).
+  Folder Asset ikut disalin ke samping .exe.
+- Beri ikon aplikasi (.ico) dan isi judul, versi. Tes di komputer lain yang tidak punya
+  Visual Studio. Tulis langkahnya di Dokumentasi/Cara-Build.md.
+
+#15 Pengaturan aplikasi (P2)
+- FrmPengaturan (Forms/Umum, anak MDI, hanya Admin) mengedit kunci di bagian 6.7.
+  Validasi tiap kolom dengan TryParse dan rentang wajar (contoh: pajak 0-30, idle 15-600
+  detik). Simpan lewat ModPengaturan.Simpan dan catat PENGATURAN_UBAH.
+- ModPengaturan memuat semua kunci ke Dictionary saat Sub Main. Bila database gagal
+  dibaca, gunakan nilai bawaan agar kiosk tetap jalan.
+
+
+2.7 Tugas berjalan sepanjang proyek
+-----------------------------------
+- Review dan merge Pull Request ke main. Pastikan main selalu build.
+- Menjawab permintaan perubahan modul bersama maksimal 1 hari.
+- Mengumumkan setiap perubahan skema (migrasi) dan kontrak.
+- Menjalankan uji alur lengkap (bagian 11) bersama tim di Fase 4 dan Fase 6.
+- Menggabungkan dokumentasi kelima anggota menjadi satu laporan.
+
+
+2.8 Dokumentasimu
+-----------------
+Dokumentasi/A1-Fondasi.md: bab pendahuluan (latar belakang, tujuan, ruang lingkup, alur
+aplikasi), ERD (screenshot Schema Visualizer Supabase), penjelasan ModDatabase dan
+ModFunction, FrmLogin, FrmUtama, FrmPengguna, ModWindowsApi, serta Cara-Build.md. Setiap
+form memakai format repo materi: deskripsi, tabel kontrol, kode, pembahasan, kesimpulan.
+
+
+2.9 Checklist selesai (A1)
+--------------------------
+- [ ] Kerangka terkirim dan semua anggota bisa menjalankannya.
+- [ ] Skema dan seed ada di Database/, RLS aktif, connection string dibagikan lewat
+      chat.
+- [ ] FrmLogin, FrmUtama, FrmPengguna, FrmPengaturan jalan dengan database asli.
+- [ ] Hotkey, topmost, beep, dan tick count berfungsi.
+- [ ] Hak akses menu berbeda untuk Admin dan Kasir.
+- [ ] Butir 1, 2, 4, 9, 15 selesai (atau dicatat jelas apa yang belum).
+- [ ] Dokumentasi A1 dan laporan gabungan selesai.
+
+========================================================================================
+3. DAFTAR FORM DAN MODUL, BESERTA PEMILIKNYA
+========================================================================================
+Satu form atau modul hanya punya satu pemilik. Hanya pemilik yang boleh mengedit isinya.
+
+
+3.1 Form
+--------
+A1  Forms/Umum      FrmLogin, FrmUtama (MDI induk), FrmPengguna, FrmPengaturan
+A2  Forms/Kiosk     FrmWelcome, FrmMenu, FrmDetailProduk, FrmIdle, FrmRating
+                    Controls/ProdukCard (UserControl)
+A3  Forms/Checkout  FrmKeranjang, FrmPembayaran, FrmStruk
+A4  Forms/Kasir     FrmKasir, FrmDapur, FrmAntrian, FrmLog
+A5  Forms/Admin     FrmProduk, FrmVoucher, FrmLaporan, FrmDashboard, FrmMember
+                    Controls/GrafikBatang (UserControl)
+
+
+3.2 Modul dan class
+-------------------
+A1  ModDatabase, ModFunction, ModValidasi, ModFormat, ModSesi, ModWindowsApi,
+    ModTema, ModCache, ModLog, ModPengaturan, Konstanta, semua class model, Sub Main
+A2  ModProduk, ModBahasa, ModIdle
+A3  ModKeranjang, ModPesanan, ModPromo
+A4  ModAntrian
+A5  ModLaporan, ModMember
+Di Fase 0, A1 membuat semua modul di atas sebagai stub dengan nama dan signature final,
+berisi data dummy. Dengan begitu semua form bisa langsung compile dan jalan. Pemilik
+modul mengganti isi stub dengan isi sebenarnya.
+
+Form yang dibuka dari menu FrmUtama harus punya constructor tanpa parameter, kecuali
+yang tercatat di bagian 6.
+
+========================================================================================
+4. STRUKTUR PROYEK DAN KONVENSI KODE
+========================================================================================
+
+
+4.1 Struktur folder
+-------------------
+KioskResto.slnx
+KioskResto/
+  KioskResto.vbproj
+  appsettings.json            TIDAK di-commit (berisi password)
+  appsettings.example.json    di-commit, isinya placeholder
+  Asset/
+    Produk/  Banner/  Suara/
+  Database/                   skema.sql, seed.sql, migrasi-NN.sql
+  Dokumentasi/                satu file .md per anggota
+  Modul/                      semua Mod*.vb
+  Model/                      Konstanta.vb dan class model
+  Controls/                   ProdukCard.vb, GrafikBatang.vb
+  Forms/
+    Umum/  Kiosk/  Checkout/  Kasir/  Admin/
+Nama solution "KioskResto" bersifat sementara. A1 boleh menggantinya sebelum commit
+pertama.
+
+
+4.2 Konvensi
+------------
+- Teknologi: VB.NET, Windows Forms, target net10.0-windows, format solution .slnx.
+  Option Strict On diatur di .vbproj oleh A1. Paket NuGet: Npgsql dan
+  Microsoft.Extensions.Configuration.Json. Satu-satunya paket tambahan untuk
+  pengembangan adalah QRCoder (dipakai A3). Samakan versi Visual Studio dan SDK .NET
+  dengan yang dipakai di materi.
+- Prefix kontrol dari materi: btn, txt, lbl, cbo, dgv, lst, bs, err, pic, chk, tmr.
+  Tambahan yang disepakati: pnl, flp, tab, mnu, nud, dtp, rdo, grp.
+- Form berawalan Frm, modul berawalan Mod. Class model memakai PascalCase tanpa prefix.
+- Class model memakai Public Property, bukan field public.
+- Modul data dan modul hitung tidak menampilkan MessageBox. Error dilempar ke pemanggil,
+  lalu form yang menangkapnya dengan Try/Catch dan menampilkan pesan ramah.
+- Semua query berparameter. Parameter dikirim lewat Dictionary(Of String, Object) dengan
+  kunci tanpa tanda @. Dilarang menyambung input pengguna langsung ke teks SQL.
+- Pesan ke pengguna memakai Bahasa Indonesia yang singkat dan jelas. Jangan tampilkan
+  stack trace ke pelanggan.
+- Format uang selalu lewat ModFormat.Rupiah. Status, metode bayar, dan peran selalu
+  lewat class konstanta, jangan menulis string manual.
+- Waktu: kolom waktu pesanan disimpan dalam WIB oleh SQL, yaitu (now() at time zone
+  'Asia/Jakarta'). Server Supabase memakai UTC, jadi tanpa ini nomor antrian dan laporan
+  harian akan salah jam. Jangan kirim DateTime.Now atau DateTime.UtcNow ke kolom waktu
+  pesanan. Untuk filter tanggal dari DateTimePicker kirim dtp.Value.Date.
+- Saat debug (Debugger.IsAttached), jangan aktifkan TopMost dan layar penuh supaya
+  Visual Studio tetap bisa dipakai.
+- Jangan mengedit file .Designer.vb dengan tangan kecuali terpaksa.
+- Event handler dibuat pendek. Query dan perhitungan ditaruh di modul.
+
+========================================================================================
+5. DATABASE SUPABASE (SATU PROJECT UNTUK SELURUH TIM)
+========================================================================================
+A1 membuat project, tabel, dan data awal. Connection string hanya dibagikan lewat chat
+tim. File appsettings.json tidak boleh di-commit. Yang di-commit hanya
+appsettings.example.json.
+
+
+5.1 Tabel dan kolom
+-------------------
+kategori        id_kategori PK, nama (unik), urutan
+produk          id_produk PK, id_kategori FK, nama, deskripsi, harga, gambar (nama file),
+                tersedia, best_seller, stok (NULL = tidak dilacak), dibuat_pada
+opsi_produk     id_opsi PK, id_produk FK, nama_opsi, tipe (Ukuran/Addon/Pedas), tambahan_harga
+pengguna        id_pengguna PK, username (unik), password_hash, nama, role (Admin/Kasir), aktif
+member          id_member PK, no_hp (unik), nama, poin
+voucher         kode PK, jenis (Persen/Nominal), nilai, min_belanja, tgl_mulai, tgl_akhir, aktif
+pesanan         id_pesanan PK, no_antrian, tipe_makan, tanggal, subtotal, diskon, pajak, total,
+                metode_bayar, status_bayar, status_pesanan, id_kasir FK, kode_voucher FK,
+                id_member FK, poin_dipakai, poin_didapat, uang_bayar, kembalian,
+                waktu_diproses, waktu_siap
+detail_pesanan  id_detail PK, id_pesanan FK, id_produk FK, nama_produk, qty, harga_satuan,
+                opsi_dipilih, catatan, subtotal
+log_aktivitas   id_log PK, waktu, id_pengguna FK, aksi, keterangan
+pengaturan      kunci PK, nilai
+rating_pesanan  id_pesanan PK/FK, bintang (1-5), komentar
+banner_promo    id_banner PK, judul, gambar, urutan, aktif
+Nomor antrian unik per hari (reset setiap hari WIB). Tabel produk memakai nama "produk",
+bukan "menu", karena "Menu" bentrok dengan System.Windows.Forms.Menu.
+
+
+5.2 Siapa menulis tabel apa
+---------------------------
+pengguna                    A1 (tulis), semua (baca untuk login)
+pengaturan                  A1 (tulis), semua (baca)
+kategori, produk,
+opsi_produk, banner_promo   A5 (tulis), A2 dan A3 (baca). Stok dikurangi A3, dikembalikan A4.
+voucher                     A5 (tulis), A3 (baca)
+member                      A5 (tulis), A3 (baca dan update poin saat transaksi)
+pesanan, detail_pesanan     A3 (tulis saat membuat), A4 (ubah status), A5 (baca)
+rating_pesanan              A2 (tulis), A5 (baca)
+log_aktivitas               semua lewat ModLog.Catat, A4 (baca)
+
+
+5.3 Konstanta (Model/Konstanta.vb, class dengan Public Const, dibuat A1)
+------------------------------------------------------------------------
+StatusPesanan   MenungguPembayaran = "Menunggu Pembayaran", Diproses = "Diproses",
+                Siap = "Siap", Selesai = "Selesai", Dibatalkan = "Dibatalkan"
+StatusBayar     Belum = "Belum", Lunas = "Lunas"
+MetodeBayar     Tunai = "Tunai", Qris = "QRIS", Kartu = "Kartu", EWallet = "E-Wallet"
+TipeMakan       DineIn = "Dine In", TakeAway = "Take Away"
+Peran           Admin = "Admin", Kasir = "Kasir"
+TipeOpsi        Ukuran = "Ukuran", Addon = "Addon", Pedas = "Pedas"
+JenisVoucher    Persen = "Persen", Nominal = "Nominal"
+
+
+5.4 Alur status pesanan
+-----------------------
+Tunai            : Menunggu Pembayaran -> (kasir konfirmasi) -> Diproses -> Siap -> Selesai
+QRIS/Kartu/Wallet: (langsung Lunas)    -> Diproses -> Siap -> Selesai
+Batal            : dari Menunggu Pembayaran atau Diproses -> Dibatalkan (stok dikembalikan)
+Status "Siap" dan "Selesai" tidak bisa dibatalkan.
+
+========================================================================================
+6. KONTRAK ANTAR ANGGOTA
+========================================================================================
+Ini daftar fungsi, properti, dan form yang dipakai lintas anggota. Bentuk di bawah
+adalah patokan. Bentuk final dibekukan A1 di kerangka (Fase 0). Setelah dibekukan,
+mengubah nama atau parameter harus diumumkan di grup dan disetujui pemiliknya.
+
+
+6.1 Class model (A1, folder Model)
+----------------------------------
+Produk         IdProduk, IdKategori, NamaKategori, Nama, Deskripsi, Harga (Decimal), Gambar,
+               Tersedia, BestSeller, Stok (Integer?, Nothing = tidak dilacak)
+OpsiProduk     IdOpsi, IdProduk, NamaOpsi, Tipe, TambahanHarga
+ItemKeranjang  Kunci (unik per kombinasi produk+opsi+catatan), IdProduk, NamaProduk, Gambar,
+               HargaDasar, TambahanOpsi, OpsiDipilih (teks ringkas), Catatan, Qty,
+               ReadOnly HargaSatuan (= HargaDasar + TambahanOpsi), ReadOnly SubtotalItem
+Pengguna       IdPengguna, Username, Nama, Peran, Aktif
+Voucher        Kode, Jenis, Nilai, MinBelanja, TglMulai, TglAkhir, Aktif
+Member         IdMember, NoHp, Nama, Poin
+RincianHarga   Subtotal, DiskonBertingkat, DiskonVoucher, DiskonPoin, Pajak, Total,
+               KodeVoucher, PoinDipakai, PoinDidapat, ReadOnly TotalDiskon
+HasilVoucher   Valid (Boolean), Pesan, Diskon (Decimal)
+HasilPesanan   IdPesanan, NoAntrian
+
+
+6.2 Modul A1
+------------
+ModDatabase.BukaKoneksi() As NpgsqlConnection        pemanggil wajib memakai Using
+ModDatabase.TesKoneksi() As Boolean
+ModFunction.AmbilData(sql, Optional prm As Dictionary(Of String, Object)) As DataTable
+ModFunction.EksekusiData(sql, Optional prm) As Integer       jumlah baris terdampak
+ModFunction.EksekusiScalar(sql, Optional prm) As Object      contoh: INSERT ... RETURNING id
+ModFunction.AmbilDataAsync / EksekusiDataAsync / EksekusiScalarAsync   versi Task(Of ...)
+ModValidasi.WajibIsi(txt As Control, ep As ErrorProvider, pesan As String) As Boolean
+ModValidasi.BacaAngka(txt As TextBox, ep As ErrorProvider, ByRef hasil As Decimal) As Boolean
+ModValidasi.HanyaAngka(e As KeyPressEventArgs)               dipanggil dari event KeyPress
+ModFormat.Rupiah(nilai As Decimal) As String                 hasil: "Rp25.000"
+ModFormat.Durasi(d As TimeSpan) As String                    hasil: "05:32"
+ModSesi.IdPengguna, ModSesi.NamaPengguna, ModSesi.Peran      property
+ModSesi.Masuk(p As Pengguna), ModSesi.Keluar(), ModSesi.SudahLogin() As Boolean
+ModSesi.BolehAkses(namaForm As String) As Boolean
+ModWindowsApi.SelaluDiAtas(f As Form, aktif As Boolean)
+ModWindowsApi.DaftarHotkey(handle As IntPtr, id As Integer, modifier As UInteger, kunci As Keys) As Boolean
+ModWindowsApi.BatalHotkey(handle As IntPtr, id As Integer)
+ModWindowsApi.Bunyi()                                        MessageBeep
+ModWindowsApi.WaktuAktif() As ULong                          GetTickCount64
+ModTema.TerapkanForm(f As Form), ModTema.TombolUtama(b As Button), ModTema.TombolSekunder(b As Button)
+ModTema.WarnaUtama / WarnaAksen / WarnaLatar / WarnaTeks As Color, FontJudul / FontBiasa As Font
+ModCache.Ambil(Of T)(kunci As String, ttlDetik As Integer, pengambil As Func(Of T)) As T
+ModCache.Hapus(kunci As String), ModCache.HapusAwalan(awalan As String)
+ModLog.Catat(aksi As String, Optional keterangan As String = "")
+ModPengaturan.Ambil(kunci As String, Optional def As String = "") As String
+ModPengaturan.AmbilInt(kunci As String, def As Integer) As Integer
+ModPengaturan.AmbilDesimal(kunci As String, def As Decimal) As Decimal
+ModPengaturan.Simpan(kunci As String, nilai As String)
+Kunci cache: "kategori" (TTL 300 detik), "produk:..." (TTL 60 detik). Setiap kali data
+produk, opsi, atau stok berubah, pelakunya memanggil ModCache.HapusAwalan("produk").
+
+
+6.3 Modul dan form A2
+---------------------
+ModProduk.AmbilKategori() As DataTable
+ModProduk.AmbilProduk(Optional idKategori As Integer = 0) As DataTable   0 = semua; ada kolom nama_kategori
+ModProduk.AmbilOpsi(idProduk As Integer) As DataTable
+ModProduk.AmbilGambar(namaFile As String) As Image    dari cache, placeholder bila file tidak ada.
+                                                      Pemanggil TIDAK boleh Dispose gambar ini.
+ModBahasa.T(kunci As String) As String, ModBahasa.Bahasa ("ID"/"EN"), Event BahasaBerubah
+ModIdle.Mulai(batasDetik As Integer), ModIdle.Berhenti(), Event Habis
+FrmDetailProduk(idProduk As Integer)    ShowDialog, DialogResult.OK bila ditambahkan ke keranjang
+FrmRating(idPesanan As Integer)         ShowDialog, dibuka dari FrmStruk
+ModIdle memasang IMessageFilter pada aplikasi, jadi semua form (termasuk milik A3)
+otomatis terhitung aktif tanpa perlu memanggil apa pun.
+
+
+6.4 Modul dan form A3
+---------------------
+ModKeranjang.TipeMakan As String                     diisi A2 saat memilih Dine In / Take Away
+ModKeranjang.Isi() As List(Of ItemKeranjang)         salinan, tidak mengubah isi asli
+ModKeranjang.Tambah(item As ItemKeranjang)           gabung qty bila Kunci sama
+ModKeranjang.UbahQty(kunci As String, qtyBaru As Integer)
+ModKeranjang.Hapus(kunci As String), ModKeranjang.Kosongkan()
+ModKeranjang.JumlahItem() As Integer, ModKeranjang.Subtotal() As Decimal
+ModKeranjang.KeranjangBerubah                        Event, dipakai A2 untuk label jumlah dan total
+ModPromo.CekVoucher(kode As String, subtotal As Decimal) As HasilVoucher
+ModPromo.HitungRincian(subtotal As Decimal, kodeVoucher As String, poinDipakai As Integer) As RincianHarga
+ModPesanan.SimpanPesanan(metode As String, rincian As RincianHarga,
+                         Optional idMember As Integer? = Nothing) As HasilPesanan
+    membaca isi dari ModKeranjang dan TipeMakan; satu transaksi atomik
+ModPesanan.HitungKembalian(total As Decimal, bayar As Decimal) As Decimal
+ModPesanan.PecahKembalian(kembalian As Decimal) As Dictionary(Of Integer, Integer)
+    pecahan -> jumlah lembar/koin (100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100)
+FrmKeranjang    ShowDialog dari FrmMenu, DialogResult.OK bila pesanan selesai (kiosk kembali ke Welcome)
+FrmStruk(idPesanan As Integer, Optional cetakUlang As Boolean = False)
+    cetakUlang = True: tanpa rating dan tanpa mengosongkan keranjang (dipakai A4)
+
+
+6.5 Modul dan form A4
+---------------------
+ModAntrian.AmbilPesanan(Optional status As String = "") As DataTable
+    kolom: id_pesanan, no_antrian, tipe_makan, tanggal, total, metode_bayar, status_bayar,
+           status_pesanan, waktu_diproses, waktu_siap
+ModAntrian.AmbilDetail(idPesanan As Integer) As DataTable
+ModAntrian.UbahStatus(idPesanan As Integer, statusBaru As String) As Boolean
+    memvalidasi transisi, mengisi waktu_diproses/waktu_siap, mengembalikan stok bila Dibatalkan
+ModAntrian.KonfirmasiTunai(idPesanan As Integer, uangBayar As Decimal) As Boolean
+FrmAntrian()    jendela mandiri layar penuh (bukan anak MDI)
+Kode aksi untuk ModLog.Catat (disepakati, jangan menulis kode lain): LOGIN, LOGOUT,
+LOGIN_GAGAL, BAYAR_TUNAI, PESANAN_BATAL, STATUS_UBAH, PRODUK_TAMBAH, PRODUK_UBAH,
+PRODUK_HAPUS, PENGGUNA_UBAH, VOUCHER_UBAH, MEMBER_UBAH, PENGATURAN_UBAH.
+
+
+6.6 Modul A5
+------------
+ModMember.Cari(noHp As String) As Member          Nothing bila tidak ada
+ModMember.Daftar(noHp As String, nama As String) As Member
+ModLaporan.JumlahStokMenipis() As Integer         opsional, bisa ditampilkan A1 di status bar
+Aturan poin (nilai di ModPengaturan): perolehan 1 poin per Rp10.000 total
+(poin_per_rupiah), 1 poin bernilai Rp100 sebagai diskon (nilai_poin).
+
+
+6.7 Pengaturan (tabel pengaturan, dibuat A1)
+--------------------------------------------
+nama_toko, pajak_persen (11), idle_detik (60), ambang_stok (5), ambang_tunggu_menit (10),
+poin_per_rupiah (10000), nilai_poin (100), bahasa_default (ID)
+
+========================================================================================
+7. PENGEMBANGAN DI ATAS MATERI MINIMAL
+========================================================================================
+Aturan: kerjakan materi minimal dulu, lalu P1, lalu P2, lalu P3. Jangan mulai
+pengembangan sebelum bagian minimal milikmu jalan dan sudah di-merge ke main. Beban tiap
+anggota sudah diseimbangkan lewat kolom PIC.
+
+No  Pengembangan                                    Prior  PIC   Catatan
+ 1  Tema kiosk modern                                P1    A1    ModTema, dipakai semua form
+ 2  Database responsif (async + cache)               P1    A1    ModFunction async, ModCache
+ 3  Transaksi atomik pesanan                         P1    A3    BeginTransaction, rollback
+ 4  Login lebih aman                                 P1    A1    PBKDF2, batas percobaan
+ 5  Kartu produk kustom                              P1    A2    UserControl dengan GDI+
+ 6  Struk cetak dengan QR                            P1    A3    PrintDocument + QRCoder
+ 7  Stok otomatis                                    P1    A5    A3 kurangi, A4 kembalikan, A2 tampil Habis
+ 8  Dashboard dan grafik                             P1    A5    grafik digambar GDI+
+ 9  Build .exe siap demo                             P1    A1    publish single-file
+10  Mesin promo (bertingkat + voucher + poin)        P2    A3    ModPromo.HitungRincian
+11  Simulasi QRIS                                    P2    A3    QR + hitung mundur
+12  Member dan poin                                  P2    A5    A3 memakai saat checkout
+13  Notifikasi dapur                                 P2    A4    toast, pesanan terlambat, suara
+14  Log aktivitas                                    P2    A4    A1 menyediakan ModLog, semua memanggil
+15  Pengaturan aplikasi                              P2    A1    FrmPengaturan, ModPengaturan
+16  Dua bahasa ID/EN                                 P3    A2    ModBahasa
+17  Banner promo                                     P3    A2    slider di FrmWelcome
+18  Rating pesanan                                   P3    A2    FrmRating
+19  Statistik dapur                                  P3    A4    waktu persiapan, pesanan per jam
+Detail tiap butir yang menjadi tugasmu ada di bagian 2 (pengembangan milikmu). Butir
+milik orang lain tidak perlu kamu kerjakan, tetapi lihat kolom Catatan untuk titik
+temunya.
+
+Catatan: hanya QRCoder yang butuh paket NuGet tambahan, dan belum diuji di .NET 10. A3
+harus memasang dan mencobanya sejak awal. Grafik tidak memakai paket apa pun karena
+kontrol Chart bawaan .NET Framework tidak ikut di WinForms .NET modern.
+
+========================================================================================
+8. ATURAN KERJA TIM
+========================================================================================
+- Kepemilikan: jangan mengedit form atau modul milik orang lain. Butuh perubahan? Minta
+  ke pemiliknya lewat grup.
+- Kontrak (nama dan parameter fungsi yang dipakai orang lain) tidak boleh diubah
+  diam-diam. Umumkan di grup dulu.
+- Skema database hanya diubah lewat A1. Perubahan dibuat sebagai file
+  Database/migrasi-NN.sql lalu diumumkan di grup.
+- Kerjakan dengan data dummy dulu. Sambungkan ke Supabase setelah modul A1 siap.
+- Branch main harus selalu bisa build dan jalan. Jangan push kode yang error ke main.
+- Jangan commit: appsettings.json, folder bin, obj, .vs, dan file .user.
+- Password dan connection string hanya dibagikan lewat chat tim. Jangan ditulis di kode,
+  README, atau screenshot dokumentasi.
+- Semua query berparameter, tanpa pengecualian.
+- Setiap anggota menulis dokumentasi modulnya sendiri di Dokumentasi/A<n>-<nama>.md,
+  dengan format repo materi: deskripsi, tabel kontrol, kode, pembahasan, kesimpulan.
+  Ambil screenshot sambil mengerjakan, jangan menunggu akhir.
+- Kalau terhambat lebih dari 30 menit pada sesuatu yang bergantung pada orang lain,
+  kabari grup. Jangan menunggu diam.
+
+========================================================================================
+9. GIT
+========================================================================================
+Status saat ini: repo tim BELUM dibuat. Repo materi (rezaaplvv/Pemograman-Visual) hanya
+untuk dibaca, jangan di-push.
+
+
+9.1 Sambil menunggu repo tim
+----------------------------
+- Jangan menunggu. Kerjakan di folder lokal memakai kerangka dari A1 (dikirim sebagai
+  ZIP lewat grup) dan data dummy.
+- Hanya sentuh file milikmu, supaya nanti mudah dipindahkan ke repo.
+
+
+9.2 Menyiapkan repo tim (dilakukan sekali)
+------------------------------------------
+1. Satu orang (disarankan A1) membuat repo baru di GitHub. Visibilitas Private. Jangan
+   centang tambah README atau .gitignore, biarkan kosong. Nama saran: kiosk-resto-vb.
+2. Settings > Collaborators: undang keempat anggota lain.
+3. A1 mem-push kerangka ke branch main. Kerangka sudah berisi .gitignore (hasil dotnet
+   new gitignore ditambah appsettings.json), appsettings.example.json, dan folder
+   Database.
+4. Setiap anggota meng-clone repo, lalu membuat branch sendiri. Isi URL repo di sini
+   setelah jadi: <URL_REPO_TIM>.
+
+
+9.3 Alur harian
+---------------
+Nama branch: a1-fondasi, a2-kiosk, a3-checkout, a4-kasir, a5-admin. Fitur besar boleh
+punya sub-branch, misalnya a2-kiosk-kartu-produk.
+git clone <URL_REPO_TIM>
+git checkout -b a2-kiosk                     (sekali, saat pertama)
+
+git checkout a2-kiosk
+git pull --rebase origin main                (ambil perubahan terbaru dari main)
+   ... kerja, build, tes ...
+git add Forms/Kiosk Modul/ModProduk.vb
+git commit -m "[A2] FrmMenu: grid produk dan pencarian"
+git push origin a2-kiosk
+Lalu buka Pull Request ke main. A1 me-review dan merge. Merge ke main minimal setiap 2
+hari sekali, jangan ditumpuk di akhir. Format pesan commit: "[A<n>] isi singkat".
+
+
+9.4 Konflik dan file khusus
+---------------------------
+- Kalau konflik muncul di file milik orang lain, berarti ada yang melanggar kepemilikan.
+  Jangan diselesaikan sendiri, kabari A1.
+- File .Designer.vb ikut di-commit bersama form-nya. Jangan commit perubahan Designer
+  yang tidak sengaja pada form milik orang lain.
+- Foto produk disimpan di Asset/Produk, maksimal 300 KB per file.
+- Foto yang diunggah lewat FrmProduk masuk ke folder Asset di samping .exe (folder bin),
+  bukan folder proyek, jadi tidak otomatis ikut git. Kalau mau ikut git, salin manual ke
+  folder Asset di proyek.
+
+========================================================================================
+10. URUTAN KERJA
+========================================================================================
+Tanggal tiap fase ditentukan tim berdasarkan tenggat dosen. Sisakan minimal 20% waktu
+untuk Fase 6.
+Fase 0  (A1 saja, 2-3 jam)  Kerangka proyek, Supabase, skema, modul stub, form kosong.
+                            Lainnya: baca file ini dan materi repo, siapkan Visual Studio,
+                            rancang tampilan di kertas atau Figma sambil menunggu kerangka.
+Fase 1  Materi minimal      Semua paralel dengan data dummy. Form milikmu jalan, ada validasi
+                            dan Try/Catch.
+Fase 2  Sambung database    Ganti dummy dengan query berparameter ke Supabase. Merge pertama
+                            ke main.
+Fase 3  Pengembangan P1     Butir P1 milikmu (bagian 7).
+Fase 4  Integrasi           Uji alur lengkap (bagian 11) dan perbaiki bug lintas modul.
+Fase 5  Pengembangan P2/P3  Sesuai sisa waktu. Butir yang tidak sempat boleh dilepas, tidak
+                            apa-apa.
+Fase 6  Bekukan fitur       Build .exe, dokumentasi, latihan demo. Tidak ada fitur baru lagi.
+Titik temu antar anggota hanya: paket fondasi A1 (hari pertama), ModKeranjang (A2 ke
+A3), tabel pesanan (A3 ke A4 dan A5), dan konstanta status. Selebihnya mandiri.
+
+========================================================================================
+11. UJI ALUR LENGKAP (DIPAKAI DI FASE 4 DAN SEBELUM DEMO)
+========================================================================================
+Alur utama (tunai):
+1. Kiosk: pilih Dine In, pilih beberapa produk dengan opsi, masuk keranjang, ubah qty,
+   pakai voucher, Lanjut Bayar, pilih Tunai. Muncul nomor antrian dan struk.
+2. Ctrl+Alt+F12, login Kasir. FrmKasir menampilkan pesanan "Menunggu Pembayaran".
+   Konfirmasi tunai, kembalian benar.
+3. FrmDapur menampilkan pesanan, bunyi beep. Tandai Siap.
+4. FrmAntrian menampilkan nomor di kolom "Siap Diambil". Tandai Selesai.
+5. Login Admin: pesanan muncul di riwayat dan laporan, angka sesuai.
+
+Skenario tambahan:
+- Pembayaran QRIS/kartu simulasi: langsung Lunas dan Diproses tanpa lewat kasir.
+- Voucher kadaluarsa, voucher di bawah min belanja, dan voucher yang sudah dipakai
+  ditolak dengan pesan jelas.
+- Produk tersedia = False tampil "HABIS" dan tidak bisa dipilih. Produk stok 1 dipesan
+  dua kali: transaksi kedua ditolak.
+- Batalkan pesanan: status berubah dan stok kembali.
+- Kiosk dibiarkan diam: muncul peringatan, lalu reset ke layar awal dan keranjang
+  kosong.
+- Login Kasir tidak bisa membuka menu Admin. Salah password 5 kali mengunci sementara.
+- Matikan internet saat aplikasi jalan: tampil pesan ramah, aplikasi tidak crash.
+- Dua kiosk memesan hampir bersamaan: nomor antrian tidak kembar.
+
+========================================================================================
+12. RISIKO DAN TIPS
+========================================================================================
+- Project Supabase paket Free dijeda otomatis kalau aktivitas database terlalu sedikit
+  selama seminggu. Pastikan project aktif sebelum demo. Simpan skema.sql dan seed.sql
+  supaya database bisa dibuat ulang dengan cepat.
+- Koneksi dari rumah bisa gagal karena koneksi langsung Supabase biasanya hanya IPv6.
+  Pakai connection string "Session pooler" dari dashboard (menu Connect). Bukan
+  "Transaction pooler".
+- Password database milik repo materi sudah terlanjur terbuka di repo publik. Jangan
+  dipakai ulang. Sebaiknya beri tahu pemilik repo untuk me-reset password-nya.
+- Aktifkan RLS (Row Level Security) di semua tabel tanpa membuat policy, supaya tabel
+  tidak terbuka lewat API publik Supabase. Koneksi Npgsql memakai user postgres dan
+  tidak terpengaruh RLS.
+- Jangan pernah memblok UI thread. Di versi async jangan pakai .Result atau .Wait().
+  Pakai Async Sub dan Await.
+- Image.FromFile mengunci file. Selalu ambil gambar lewat ModProduk.AmbilGambar (membaca
+  lewat stream lalu clone) supaya file bisa diganti.
+- Npgsql menolak DateTime ber-Kind UTC untuk kolom timestamp tanpa zona. Kirim
+  dtp.Value.Date dan biarkan SQL mengisi waktu.
+- Hotkey Ctrl+Alt+F12 bisa gagal terdaftar bila dipakai aplikasi lain. DaftarHotkey
+  mengembalikan False, maka siapkan cadangan: klik 5 kali cepat pada logo di pojok
+  FrmWelcome membuka login.
+- Hapus data yang sudah dipakai di pesanan akan ditolak database (kode 23503). Tangkap
+  PostgresException dan tawarkan "Nonaktifkan" sebagai gantinya. Kode duplikat unik
+  adalah 23505.
+- Di VB, Dictionary dan List dalam modul bersifat shared dan hidup selama aplikasi
+  jalan. Bersihkan saat Kosongkan/Keluar supaya data pesanan lama tidak bocor ke
+  pelanggan berikutnya.
+- Merge besar di akhir adalah sumber masalah terbesar. Merge kecil dan sering.
+
+========================================================================================
+13. CHECKLIST AKHIR TIM
+========================================================================================
+- [ ] Semua form di bagian 3 ada, jalan, dan tersambung ke Supabase.
+- [ ] Uji alur lengkap (bagian 11) lulus di mesin yang bukan milik pembuatnya.
+- [ ] Tidak ada password atau connection string di repo (cek riwayat commit juga).
+- [ ] Semua query berparameter.
+- [ ] .exe hasil publish jalan di komputer tanpa Visual Studio.
+- [ ] Dokumentasi 5 anggota lengkap dan sudah digabung A1.
+- [ ] Project Supabase aktif dan data demo siap.
+- [ ] Latihan demo minimal satu kali penuh.

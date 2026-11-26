@@ -1,0 +1,20 @@
+# .NET & Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+
+# Secrets & local config
+appsettings.json
+
+# AI personal context
+.agents/
+.claude/
+.codex/
+.taste-skill/
+
+# Test screenshots
+testing/screenshoot/
+
