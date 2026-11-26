@@ -271,6 +271,23 @@ Namespace VisproPrakProjectAkhir
             End If
             ModKeranjang.Kosongkan()
 
+            ' Tes Supabase Data API & Auth JWT (Pertemuan 13)
+            Dim apiKonek As Boolean = ModSupabaseApi.VerifikasiKoneksiAsync().GetAwaiter().GetResult()
+            cek("REST API Anon (fn_kiosk_antrian_publik)", apiKonek, $"Connected={apiKonek}")
+
+            Dim apiProd = ModSupabaseApi.AmbilProdukViaApiAsync().GetAwaiter().GetResult()
+            cek("REST API GET /rest/v1/produk", apiProd.Sukses AndAlso apiProd.Data.Contains("Paket Hemat"), $"HTTP={apiProd.KodeHttp}")
+
+            Dim apiLogin = ModSupabaseApi.LoginSupabaseAuthAsync("admin@bistrokiosk.local", "admin123").GetAwaiter().GetResult()
+            cek("Supabase Auth JWT Login Admin", apiLogin.Sukses AndAlso ModSupabaseApi.TokenMasihValid(), $"HTTP={apiLogin.KodeHttp}")
+
+            Dim apiProfil = ModSupabaseApi.AmbilProfilSayaAsync().GetAwaiter().GetResult()
+            cek("RPC Authenticated fn_profil_saya", apiProfil.Sukses AndAlso apiProfil.Data.Contains("admin"), $"HTTP={apiProfil.KodeHttp}")
+
+            Dim apiTerlaris = ModSupabaseApi.AmbilMenuTerlarisAsync(DateTime.Today.AddDays(-30), DateTime.Today, 5).GetAwaiter().GetResult()
+            cek("RPC Authenticated fn_laporan_menu_terlaris", apiTerlaris.Sukses, $"HTTP={apiTerlaris.KodeHttp}")
+            ModSupabaseApi.HapusToken()
+
             Console.WriteLine($"VERIFY SUPABASE FAILURES: {failures}")
             Return (failures = 0)
         End Function

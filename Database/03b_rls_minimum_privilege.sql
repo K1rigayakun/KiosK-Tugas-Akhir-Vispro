@@ -142,3 +142,6 @@ CREATE POLICY pol_log_staff_insert       ON public.log_aktivitas FOR INSERT TO a
 -- login_attempt: DENY semua akses langsung dari authenticated (hanya lewat SECURITY DEFINER function)
 CREATE POLICY pol_login_attempt_deny_all ON public.login_attempt FOR ALL TO authenticated
   USING (false) WITH CHECK (false);
+
+
+

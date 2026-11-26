@@ -49,6 +49,7 @@ Namespace VisproPrakProjectAkhir.Modul
             _username = ""
             _namaPengguna = ""
             _peran = ""
+            ModSupabaseApi.HapusToken()
         End Sub
 
         Public Function SudahLogin() As Boolean
