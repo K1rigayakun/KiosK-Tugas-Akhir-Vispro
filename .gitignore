@@ -1,6 +1,7 @@
 # .NET & Visual Studio
 bin/
 obj/
+publish/
 .vs/
 *.user
 *.suo
